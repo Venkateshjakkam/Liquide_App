@@ -1,25 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
+import { AppProvider, useAppContext } from './context/AppContext';
+import BrokerLogin from './components/BrokerLogin';
+import BottomNav from './components/BottomNav';
+import HoldingsScreen from './components/HoldingsScreen';
+import OrderbookScreen from './components/OrderbookScreen';
+import PositionsScreen from './components/PositionsScreen';
+import OrderPad from './components/OrderPad';
+import FloatingActionButton from './components/FloatingActionButton';
 
-function App() {
+function MainApp() {
+  const { user, activeScreen } = useAppContext();
+
+  if (!user) return <BrokerLogin />;
+
+  let ScreenComp = null;
+  if (activeScreen === 'Holdings') ScreenComp = HoldingsScreen;
+  else if (activeScreen === 'Orderbook') ScreenComp = OrderbookScreen;
+  else if (activeScreen === 'Positions') ScreenComp = PositionsScreen;
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <ScreenComp />
+      <OrderPad />
+      <BottomNav />
+      <FloatingActionButton />
     </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <AppProvider>
+      <MainApp />
+    </AppProvider>
+  );
+}
