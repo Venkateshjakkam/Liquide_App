@@ -1,42 +1,56 @@
+// src/components/OrderPad.js
+import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 export default function OrderPad() {
   const { orderPad, setOrderPad } = useAppContext();
+  const [qty, setQty] = useState(orderPad.stock?.qty || 1);
+  const [price, setPrice] = useState(orderPad.stock?.avgPrice || orderPad.stock?.price || 0);
+
   if (!orderPad.open) return null;
 
   const { type, stock } = orderPad;
-  const padColor = type === 'buy' ? '#eaffea' : '#ffeaea';
+
+  const isBuy = type === 'buy';
+
+  const onPlaceOrder = () => {
+    // For demo: Just close on place. Replace with real order logic if needed.
+    alert(`${isBuy ? 'Buying' : 'Selling'} ${qty} of ${stock.symbol} at price ${price}`);
+    setOrderPad({ open: false, type: null, stock: null });
+  };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        top: 40,
-        right: 0,
-        left: 0,
-        margin: 'auto',
-        maxWidth: 400,
-        padding: 28,
-        borderRadius: 8,
-        boxShadow: '0 3px 16px rgba(0,0,0,0.12)',
-        background: padColor,
-        zIndex: 20,
-      }}
-    >
-      <h4 style={{ color: type === 'buy' ? '#198754' : '#dc3545', marginBottom: 14 }}>
-        {type === 'buy' ? 'Buy' : 'Sell'} {stock.symbol}
+    <div className={`order-pad ${isBuy ? 'buy' : 'sell'}`}>
+      <h4>
+        {isBuy ? 'Buy' : 'Sell'} {stock.symbol}
       </h4>
-      <div>
-        <label>Quantity: </label>
-        <input type="number" min={1} defaultValue={stock.qty || 1} />
-      </div>
-      <div>
-        <label>Price: </label>
-        <input type="number" min={1} defaultValue={stock.avgPrice || stock.price || 0} />
-      </div>
-      <div style={{ marginTop: 18 }}>
-        <button style={{ marginRight: 12 }}>Place Order</button>
-        <button onClick={() => setOrderPad({ open: false })} style={{ color: '#888' }}>Cancel</button>
+      <label htmlFor="order-qty">Quantity:</label>
+      <input
+        id="order-qty"
+        type="number"
+        min="1"
+        value={qty}
+        onChange={(e) => setQty(Number(e.target.value))}
+      />
+      <label htmlFor="order-price">Price:</label>
+      <input
+        id="order-price"
+        type="number"
+        min="0"
+        value={price}
+        onChange={(e) => setPrice(Number(e.target.value))}
+      />
+      <div className="btn-group">
+        <button className="btn-primary" type="button" onClick={onPlaceOrder}>
+          Place Order
+        </button>
+        <button
+          className="btn-cancel"
+          type="button"
+          onClick={() => setOrderPad({ open: false })}
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );

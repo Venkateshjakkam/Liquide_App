@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+// src/components/FloatingActionButton.js
+import React, { useState, useRef, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getMockHoldings, getMockOrderbook, getMockPositions } from '../api/mockApi';
 
@@ -6,24 +7,24 @@ export default function FloatingActionButton() {
   const { activeScreen, setOrderPad } = useAppContext();
   const [drag, setDrag] = useState(false);
   const [pos, setPos] = useState({ x: 24, y: window.innerHeight - 120 });
-  const fabRef = useRef();
+  const fabRef = useRef(null);
 
-  const onMouseDown = e => {
+  const onMouseDown = (e) => {
     setDrag(true);
     fabRef.current.startX = e.clientX - pos.x;
     fabRef.current.startY = e.clientY - pos.y;
   };
-  const onMouseMove = e => {
+  const onMouseMove = (e) => {
     if (drag) {
       setPos({
-        x: e.clientX - fabRef.current.startX,
-        y: e.clientY - fabRef.current.startY
+        x: Math.min(Math.max(0, e.clientX - fabRef.current.startX), window.innerWidth - 60),
+        y: Math.min(Math.max(0, e.clientY - fabRef.current.startY), window.innerHeight - 60),
       });
     }
   };
   const onMouseUp = () => setDrag(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (drag) {
       window.addEventListener('mousemove', onMouseMove);
       window.addEventListener('mouseup', onMouseUp);
@@ -32,10 +33,14 @@ export default function FloatingActionButton() {
         window.removeEventListener('mouseup', onMouseUp);
       };
     }
-  });
+    return undefined;
+  }, [drag]);
 
-  const handlePadOpen = async type => {
+  const [expanded, setExpanded] = useState(false);
+
+  const handlePadOpen = async (type) => {
     let stocks = [];
+
     if (activeScreen === 'Holdings') {
       stocks = await getMockHoldings();
     } else if (activeScreen === 'Orderbook') {
@@ -44,75 +49,40 @@ export default function FloatingActionButton() {
     } else if (activeScreen === 'Positions') {
       stocks = await getMockPositions();
     }
-    let stock = stocks && stocks.length > 0 ? stocks[0] : { symbol: 'AMIORG', qty: 1, avgPrice: 0 };
+
+    let stock = stocks.length > 0 ? stocks[0] : { symbol: 'AAPL', qty: 1, avgPrice: 0 };
 
     setOrderPad({ open: true, type, stock });
+    setExpanded(false);
   };
-
-  const [expanded, setExpanded] = useState(false);
 
   return (
     <div
       ref={fabRef}
-      style={{
-        position: 'fixed',
-        left: pos.x,
-        top: pos.y,
-        zIndex: 30,
-        cursor: 'move',
-        userSelect: 'none'
-      }}
+      className="fab-container"
+      style={{ left: pos.x, top: pos.y, position: 'fixed', zIndex: 300 }}
       onMouseDown={onMouseDown}
+      aria-label="Floating Action Button"
     >
-      <div style={{
-        background: '#0D6EFD',
-        width: 60,
-        height: 60,
-        borderRadius: '50%',
-        boxShadow: '0 2px 8px #999',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 36,
-        transition: 'background 0.2s',
-        cursor: 'pointer'
-      }}
-        onClick={() => setExpanded(e => !e)}
-      >+</div>
+      <div className="fab-main" onClick={() => setExpanded((e) => !e)} role="button" tabIndex={0}>
+        +
+      </div>
       {expanded && (
-        <div style={{
-          position: 'absolute',
-          top: -64,
-          left: 0,
-          display: 'flex',
-          gap: 12
-        }}>
+        <div className="fab-expanded">
           <button
-            style={{
-              background: '#198754',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 16,
-              padding: '10px 18px',
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}
-            onClick={() => { handlePadOpen('buy'); setExpanded(false); }}>
+            className="fab-buy-btn"
+            type="button"
+            onClick={() => handlePadOpen('buy')}
+            aria-label="Buy Order Pad"
+          >
             Buy
           </button>
           <button
-            style={{
-              background: '#dc3545',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 16,
-              padding: '10px 18px',
-              fontWeight: 'bold',
-              cursor: 'pointer'
-            }}
-            onClick={() => { handlePadOpen('sell'); setExpanded(false); }}>
+            className="fab-sell-btn"
+            type="button"
+            onClick={() => handlePadOpen('sell')}
+            aria-label="Sell Order Pad"
+          >
             Sell
           </button>
         </div>
