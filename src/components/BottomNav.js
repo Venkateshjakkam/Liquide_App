@@ -1,5 +1,3 @@
-// src/components/BottomNav.js
-import React from 'react';
 import { useAppContext } from '../context/AppContext';
 
 const screens = ['Holdings', 'Orderbook', 'Positions'];

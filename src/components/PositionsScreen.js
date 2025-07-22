@@ -1,5 +1,5 @@
-// src/components/PositionsScreen.js
-import React, { useEffect, useState } from 'react';
+
+import  { useEffect, useState } from 'react';
 import { getMockPositions } from '../api/mockApi';
 import { useAppContext } from '../context/AppContext';
 

@@ -1,5 +1,5 @@
-// src/components/OrderPad.js
-import React, { useState } from 'react';
+
+import  { useState } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 export default function OrderPad() {

@@ -2,7 +2,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import HoldingsScreen from './HoldingsScreen';
 import { AppProvider } from '../context/AppContext';
 
-// Mock API
 jest.mock('../api/mockApi', () => ({
   getMockHoldings: jest.fn(() =>
     Promise.resolve([{ symbol: 'AMIORG', qty: 5, avgPrice: 150 }])

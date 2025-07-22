@@ -1,5 +1,4 @@
-// src/components/FloatingActionButton.js
-import React, { useState, useRef, useEffect } from 'react';
+import  { useState, useRef, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 import { getMockHoldings, getMockOrderbook, getMockPositions } from '../api/mockApi';
 

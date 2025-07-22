@@ -5,7 +5,6 @@ export const brokers = [
 ];
 
 export function mockLogin(brokerId, credentials) {
-  // Simulate backend status: randomly 200, 400, 500
   const random = Math.random();
   return new Promise((resolve, reject) => {
     setTimeout(() => {

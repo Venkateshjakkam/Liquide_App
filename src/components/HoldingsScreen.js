@@ -1,5 +1,4 @@
-// src/components/HoldingsScreen.js
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { getMockHoldings } from '../api/mockApi';
 import { useAppContext } from '../context/AppContext';
 
