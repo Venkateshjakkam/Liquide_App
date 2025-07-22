@@ -50,7 +50,7 @@ export default function FloatingActionButton() {
       stocks = await getMockPositions();
     }
 
-    let stock = stocks.length > 0 ? stocks[0] : { symbol: 'AAPL', qty: 1, avgPrice: 0 };
+    let stock = stocks.length > 0 ? stocks[0] : { symbol: 'AMIORG', qty: 1, avgPrice: 0 };
 
     setOrderPad({ open: true, type, stock });
     setExpanded(false);
